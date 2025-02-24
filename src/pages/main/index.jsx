@@ -8,25 +8,26 @@ import { getFreshPosts } from '../../redux/slices/postsSlice';
 
 
 export const MainPage = () => {
-    const postForView = useSelector((state) => state.posts.postForView);
-    const freshPosts = useSelector((state) => state.posts.freshPosts);
+    const { post } = useSelector((state) => state.posts.postForView);
+    const { posts, loading } = useSelector((state) => state.posts.freshPosts);
     const dispatch = useDispatch();
-    
+
     useEffect(() => {
         dispatch(getFreshPosts())
     }, [])
 
     return <Container>
-        {freshPosts &&
+        {loading && <>Loading...</>}
+        {posts &&
             <>
                 <Typo>Свежие публикации</Typo>
-                <Posts posts={freshPosts} />
+                <Posts posts={posts} />
             </>
         }
-        {postForView &&
+        {post &&
             <>
                 <Typo>Последний просмотренный пост</Typo>
-                <Posts posts={[postForView]} />
+                <Posts posts={[post]} />
             </>
         }
     </Container>
