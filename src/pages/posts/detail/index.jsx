@@ -1,30 +1,41 @@
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Typo } from "../../../components/Typo";
 import { Container } from "../../../components/Container";
 import { Link } from "../../../components/Link"
-import {  getPostById, showPost } from "../../../redux/slices/postsSlice";
+import { getPostById, showPost, deletePost } from "../../../redux/slices/postsSlice";
 import * as SC from "./styles"
 
 
 export const DetailPostPage = () => {
     const { id } = useParams();
-    const { list } = useSelector((state) => state.posts.posts)
-    const postForView = useSelector((state) => state.posts.postForView);
     const dispatch = useDispatch();
 
-        useEffect(() => {
-            const intId = Number(id);
-            const findedPosts = list ? list.find((item) => item.id === intId) : undefined;
+    const navigate = useNavigate();
 
-            if (findedPosts) {
-                dispatch(showPost(findedPosts))
-            } else {
-               dispatch(getPostById(intId)) 
-            }
-            
-        }, [id, list, dispatch])
+    const { list } = useSelector((state) => state.posts.posts)
+    const postForView = useSelector((state) => state.posts.postForView);
+
+    const [postForDelete, setPostForDelete] = useState(null);
+
+    const onDeletePost = () => {
+        dispatch(deletePost(postForDelete));
+        setPostForDelete(null);
+        navigate('/posts');
+    }
+
+    useEffect(() => {
+        const intId = Number(id);
+        const findedPosts = list ? list.find((item) => item.id === intId) : undefined;
+
+        if (findedPosts) {
+            dispatch(showPost(findedPosts))
+        } else {
+            dispatch(getPostById(intId))
+        }
+
+    }, [id, list, dispatch])
 
     if (postForView.loading) {
         return <>loading...</>
@@ -39,13 +50,25 @@ export const DetailPostPage = () => {
     const image = post.image || 'https://i.pinimg.com/236x/c8/cc/24/c8cc24bba37a25c009647b8875aae0e3.jpg'
 
     return <Container>
+        {postForDelete &&
+            <SC.ModalWrapper>
+                <SC.Modal>
+                    <SC.ModalText>Вы точно уверены, что хотите удалить публикацию c ID - {postForDelete.id}?</SC.ModalText>
+                    <SC.ModalContent>
+                        <SC.DeleteButton onClick={onDeletePost}>Да</SC.DeleteButton>
+                        <button onClick={() => setPostForDelete(null)}>Нет</button>
+                    </SC.ModalContent>
+                </SC.Modal>
+            </SC.ModalWrapper>
+        }
         <Typo>{post.title}</Typo>
         <SC.Image src={image} alt={post.title} />
         <SC.Text>{post.body}</SC.Text>
         <div style={{ clear: 'both' }} />
         <SC.LinkWrapper>
             <Link to='/posts/'>Обратно к публикациям</Link>
-            <Link to={`/posts/${post.id}/edit`}>Редактировать</Link>
+            {list && <Link to={`/posts/${post.id}/edit`}>Редактировать</Link>}
+            {list && <SC.DeleteButton onClick={() => setPostForDelete(post)}>Удалить</SC.DeleteButton>}
         </SC.LinkWrapper>
     </Container>
 }
