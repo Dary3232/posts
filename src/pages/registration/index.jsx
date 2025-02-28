@@ -1,4 +1,4 @@
-import React, { useState, useId } from "react";
+import React, { useState } from "react";
 import { Typo } from '../../components/ui/Typo'
 import { Container } from '../../components/ui/Container'
 import { Form } from "../../components/ui/Form";
