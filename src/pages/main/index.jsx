@@ -13,17 +13,21 @@ export const MainPage = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getFreshPosts())
-    }, [dispatch])
+        if(!posts) { 
+           dispatch(getFreshPosts()) 
+        }
+    }, [posts, dispatch])
 
     return <Container>
         {loading && <>Loading...</>}
-        {posts &&
-            <>
-                <Typo>Свежие публикации</Typo>
-                <Posts posts={posts} />
-            </>
-        }
+        {posts && posts.length > 0 ? ( 
+                <>
+                    <Typo>Свежие публикации</Typo>
+                    <Posts posts={posts} />
+                </>
+            ) : (
+                <Typo>Свежих публикаций нет</Typo>
+            )}
         {post &&
             <>
                 <Typo>Последний просмотренный пост</Typo>
@@ -32,4 +36,5 @@ export const MainPage = () => {
         }
     </Container>
 }
+
 

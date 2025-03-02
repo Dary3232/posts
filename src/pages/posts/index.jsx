@@ -11,10 +11,10 @@ export const PostsPage = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if(!list) {
-          dispatch(getPosts());  
+        if (!list) {
+            dispatch(getPosts());
         }
-    },[list, dispatch])
+    }, [list, dispatch])
 
     if (!list && loading) {
         return <Container>Loading...</Container>
@@ -23,10 +23,15 @@ export const PostsPage = () => {
     if (!list) {
         return <>404</>
     }
-    
 
     return <Container>
-        <Typo>Публикации</Typo>
-        <Posts posts={list} />
+        {list && list.length > 0 ? (
+            <>
+                <Typo>Публикации</Typo>
+                <Posts posts={list} />
+            </>
+        ) : (
+            <Typo>Публикации не найдены</Typo>
+        )}
     </Container>
 }
