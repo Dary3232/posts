@@ -5,8 +5,8 @@ import { Typo } from "../../../components/ui/Typo";
 import { Container } from "../../../components/ui/Container";
 import { Link } from "../../../components/ui/Link"
 import { getPostById, showPost, deletePost } from "../../../redux/slices/postsSlice";
+import { Loader } from "../../../components/ui/Loader";
 import * as SC from "./styles"
-
 
 export const DetailPostPage = () => {
     const { id } = useParams();
@@ -40,7 +40,7 @@ export const DetailPostPage = () => {
     }, [id, list, dispatch])
 
     if (postForView.loading) {
-        return <>loading...</>
+        return <Loader />
     }
 
     if (!postForView.post || !postForView.post.hasOwnProperty('id')) {

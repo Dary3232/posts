@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import * as SC from "./styles";
 import { Container } from "../ui/Container";
@@ -14,6 +14,10 @@ export const Root = () => {
         dispatch(logout());
         navigate('/auth');
     }
+
+    useEffect(() => {
+        navigate('/');
+    }, [navigate]);
 
     return (
         <>
