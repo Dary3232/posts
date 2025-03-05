@@ -1,4 +1,9 @@
-import React from 'react';
-import * as SC from './styles'
+import styled from "styled-components";
 
-export const Form = ({ children, ...rest }) => <SC.Form {...rest}>{children}</SC.Form>
+export const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 250px;
+  margin: 30px auto;
+`;

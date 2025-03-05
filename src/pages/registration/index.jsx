@@ -5,6 +5,8 @@ import { Form } from "../../components/ui/Form";
 import { Field } from "../../components/ui/Field";
 import { Input } from "../../components/ui/Input";
 import { useNavigate } from "react-router-dom";
+import { Button } from '../../components/ui/Button';
+import { Modal } from "../../components/ui/Modal";
 
 export const RegistrationPage = () => {
 
@@ -17,6 +19,17 @@ export const RegistrationPage = () => {
         }
     );
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalText, setModalText] = useState('');
+
+    const handleCloseModal = () => {
+        setModalVisible(false);
+
+        if (modalText === "Вы успешно зарегистрировались") {
+            navigate('/auth');
+        }
+    };
+
     const navigate = useNavigate();
 
     const onSubmit = (e) => {
@@ -28,13 +41,14 @@ export const RegistrationPage = () => {
 
             if (!users) {
                 localStorage.setItem('users', JSON.stringify([newUser]));
-                alert("Вы успешно зарегистрировались");
-                navigate('/auth');
+                setModalText("Вы успешно зарегистрировались");
+                setModalVisible(true);
                 return
             }
 
             if (users.find((user) => user.email === formValues.email)) {
-                alert("Пользователь с таким email уже существует");
+                setModalText("Пользователь с таким email уже существует");
+                setModalVisible(true);
                 return
             }
 
@@ -42,9 +56,8 @@ export const RegistrationPage = () => {
 
             localStorage.setItem('users', JSON.stringify(users));
 
-            alert("Вы успешно зарегистрировались");
-
-            navigate('/auth');
+            setModalText("Вы успешно зарегистрировались");
+            setModalVisible(true);
 
         } catch (e) {
             console.log(e)
@@ -97,8 +110,13 @@ export const RegistrationPage = () => {
                         onChange={(e) => onChange(e.target.name, e.target.value)}
                     />
                 </Field>
-                <button type="submit" disabled={disabled}>Регистрация</button>
+                <Button type="submit" disabled={disabled} label={'Регистрация'}/>
             </Form>
+            {modalVisible && (
+                <Modal text={modalText}>
+                    <Button onClick={handleCloseModal} label="ОК" />
+                </Modal>
+            )}
         </Container>
     )
 }

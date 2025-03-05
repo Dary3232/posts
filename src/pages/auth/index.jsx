@@ -7,11 +7,15 @@ import { Input } from "../../components/ui/Input";
 import { Typo } from "../../components/ui/Typo";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/slices/authSlice";
+import { Button } from "../../components/ui/Button";
+import { Modal } from "../../components/ui/Modal";
 
 export const AuthPage = () => {
     const [formValues, setFormValues] = useState({ email: '', password: '' });
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalText, setModalText] = useState('');
 
     const onChange = (name, value) => {
         setFormValues({ ...formValues, [name]: value })
@@ -23,14 +27,16 @@ export const AuthPage = () => {
             const users = JSON.parse(localStorage.getItem('users'));
 
             if (!users) {
-                alert("Данный пользователь не найден в системе");
+                setModalText("Данный пользователь не найден в системе");
+                setModalVisible(true);
                 return
             }
 
             const currentUser = users.find((user) => user.email === formValues.email && user.password === formValues.password);
 
             if (!currentUser) {
-                alert("Данный пользователь не найден в системе");
+                setModalText("Данный пользователь не найден в системе");
+                setModalVisible(true);
                 return
             }
 
@@ -44,6 +50,10 @@ export const AuthPage = () => {
     }
 
     const disabled = !formValues.email || !formValues.password
+
+    const handleCloseModal = () => {
+        setModalVisible(false);
+    };
 
     return (
         <Container>
@@ -67,8 +77,13 @@ export const AuthPage = () => {
                         onChange={(e) => onChange(e.target.name, e.target.value)}
                     />
                 </Field>
-                <button type="submit" disabled={disabled}>Авторизация</button>
+                <Button type="submit" disabled={disabled} label={'Авторизация'} />
             </Form>
+            {modalVisible && (
+                <Modal text={modalText}>
+                    <Button onClick={handleCloseModal} label="ОК" />
+                </Modal>
+            )}
         </Container>
     )
 }

@@ -7,6 +7,8 @@ import { Link } from "../../../components/ui/Link"
 import { getPostById, showPost, deletePost } from "../../../redux/slices/postsSlice";
 import { Loader } from "../../../components/ui/Loader";
 import * as SC from "./styles"
+import { Button } from "../../../components/ui/Button";
+import { Modal } from "../../../components/ui/Modal";
 
 export const DetailPostPage = () => {
     const { id } = useParams();
@@ -19,7 +21,7 @@ export const DetailPostPage = () => {
 
     const [postForDelete, setPostForDelete] = useState(null);
 
-    const showEditAndDeleteBtn = list && user; 
+    const showEditAndDeleteBtn = list && user;
 
     const onDeletePost = () => {
         dispatch(deletePost(postForDelete));
@@ -53,15 +55,10 @@ export const DetailPostPage = () => {
 
     return <Container>
         {postForDelete &&
-            <SC.ModalWrapper>
-                <SC.Modal>
-                    <SC.ModalText>Вы точно уверены, что хотите удалить публикацию c ID - {postForDelete.id}?</SC.ModalText>
-                    <SC.ModalContent>
-                        <SC.DeleteButton onClick={onDeletePost}>Да</SC.DeleteButton>
-                        <button onClick={() => setPostForDelete(null)}>Нет</button>
-                    </SC.ModalContent>
-                </SC.Modal>
-            </SC.ModalWrapper>
+            <Modal text={`Вы точно уверены, что хотите удалить публикацию c ID - ${postForDelete.id}?`}>
+                <Button onClick={onDeletePost} label={'Да'} variant="danger" />
+                <Button onClick={() => setPostForDelete(null)} label={'Нет'} />
+            </Modal>
         }
         <Typo>{post.title}</Typo>
         <SC.Image src={image} alt={post.title} />
@@ -70,7 +67,7 @@ export const DetailPostPage = () => {
         <SC.LinkWrapper>
             <Link to='/posts/'>Обратно к публикациям</Link>
             {showEditAndDeleteBtn && <Link to={`/posts/${post.id}/edit`}>Редактировать</Link>}
-            {showEditAndDeleteBtn && <SC.DeleteButton onClick={() => setPostForDelete(post)}>Удалить</SC.DeleteButton>}
+            {showEditAndDeleteBtn && <Button onClick={() => setPostForDelete(post)} label={'Удалить'} variant="danger" />}
         </SC.LinkWrapper>
     </Container>
 }
