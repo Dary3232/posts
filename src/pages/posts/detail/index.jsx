@@ -71,3 +71,5 @@ export const DetailPostPage = () => {
         </SC.LinkWrapper>
     </Container>
 }
+
+

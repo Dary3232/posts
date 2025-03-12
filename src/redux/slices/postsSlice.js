@@ -5,8 +5,9 @@ const initialState = {
   posts: {
     list: null,
     loading: false,
-    sortOrder: 'none',
-    searchQuery: '', 
+    totalPosts: 0,
+    sortOrder: "none",
+    searchQuery: "",
   },
   postForView: {
     post: null,
@@ -18,7 +19,6 @@ const initialState = {
   },
 };
 
-
 const updatePostList = (postList, updatedPost) => {
   return postList.map((post) => {
     if (post.id === updatedPost.id) {
@@ -28,16 +28,13 @@ const updatePostList = (postList, updatedPost) => {
   });
 };
 
-
 const addNewPost = (postList, newPost) => {
   return [newPost, ...postList];
 };
 
-
 const deletePostFromList = (postList, postId) => {
   return postList.filter((post) => post.id !== postId);
 };
-
 
 export const getPostById = createAsyncThunk(
   "posts/fetchById",
@@ -46,9 +43,12 @@ export const getPostById = createAsyncThunk(
   }
 );
 
-export const getPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  return await postsAPI.fetchPosts();
-});
+export const getPosts = createAsyncThunk(
+  "posts/fetchPosts",
+  async ({ page, limit, sortOrder, searchQuery }) => {
+    return await postsAPI.fetchPosts(page, limit, sortOrder, searchQuery);
+  }
+);
 
 export const getFreshPosts = createAsyncThunk(
   "posts/fetchFreshPosts",
@@ -57,16 +57,21 @@ export const getFreshPosts = createAsyncThunk(
   }
 );
 
-
 export const postsSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
     editPost: (state, action) => {
       state.posts.list = updatePostList(state.posts.list, action.payload);
-      state.freshPosts.posts = updatePostList(state.freshPosts.posts,action.payload);
+      state.freshPosts.posts = updatePostList(
+        state.freshPosts.posts,
+        action.payload
+      );
 
-      if (state.postForView.post && state.postForView.post.id === action.payload.id) {
+      if (
+        state.postForView.post &&
+        state.postForView.post.id === action.payload.id
+      ) {
         state.postForView.post = action.payload;
       }
     },
@@ -83,19 +88,18 @@ export const postsSlice = createSlice({
       };
     },
     deletePost: (state, action) => {
-      state.posts.list = deletePostFromList(state.posts.list, action.payload.id);
-      state.freshPosts.posts = deletePostFromList(state.freshPosts.posts, action.payload.id);
-
+      state.posts.list = deletePostFromList(
+        state.posts.list,
+        action.payload.id
+      );
+      state.freshPosts.posts = deletePostFromList(
+        state.freshPosts.posts,
+        action.payload.id
+      );
       state.postForView = {
         post: null,
         loading: false,
       };
-    },
-    setSortOrder: (state, action) => {
-      state.posts.sortOrder = action.payload;
-    },
-    setSearchQuery: (state, action) => {
-      state.posts.searchQuery = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -119,10 +123,14 @@ export const postsSlice = createSlice({
     });
     builder.addCase(getPosts.fulfilled, (state, action) => {
       state.posts = {
-        list: action.payload,
+        list: action.payload.posts,
         loading: false,
+        totalPosts: action.payload.totalPosts,
+        sortOrder: action.payload.sortOrder,
+        searchQuery: action.payload.searchQuery,
       };
     });
+
     builder.addCase(getFreshPosts.pending, (state, action) => {
       state.freshPosts = {
         posts: null,
@@ -138,8 +146,6 @@ export const postsSlice = createSlice({
   },
 });
 
-export const { editPost, addPost, showPost, deletePost, setSortOrder, setSearchQuery  } = postsSlice.actions;
+export const { editPost, addPost, showPost, deletePost } = postsSlice.actions;
 
 export default postsSlice.reducer;
-
-
