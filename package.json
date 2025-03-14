@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
+    "lodash": "^4.17.21",
     "preact": "^10.25.4",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",

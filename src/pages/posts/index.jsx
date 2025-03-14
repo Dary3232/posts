@@ -8,6 +8,7 @@ import { getPosts } from '../../redux/slices/postsSlice';
 import { Pagination } from '../../components/Pagination';
 import { Loader } from '../../components/ui/Loader';
 import * as SC from './styles';
+import { debounce } from 'lodash';
 
 export const PostsPage = () => {
     const { list, loading, totalPosts } = useSelector((state) => state.posts.posts);
@@ -27,10 +28,10 @@ export const PostsPage = () => {
         setCurrentPage(1); 
     };
 
-    const handleSearchChange = (query) => {
+    const handleSearchChange = debounce((query) => {
         setSearchQuery(query);
-        setCurrentPage(1); 
-    };
+        setCurrentPage(1);
+    }, 700)
 
     if (loading) {
         return <Loader />;
@@ -41,7 +42,7 @@ export const PostsPage = () => {
     }
 
     const totalPages = Math.ceil(totalPosts / postsPerPage);
-    
+  
     return (
         <Container>
             <SC.Wrapper>

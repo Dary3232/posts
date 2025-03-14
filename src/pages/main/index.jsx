@@ -14,7 +14,7 @@ export const MainPage = () => {
  
 
     useEffect(() => {
-        if(!posts) { 
+        if(!posts || !posts.length) { 
            dispatch(getFreshPosts()) 
         }
     }, [posts, dispatch])
