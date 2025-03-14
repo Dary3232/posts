@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Posts } from "../../components/Posts";
 import { Container } from "../../components/ui/Container";
-import { Input } from "../../components/ui/Input";
 import { Typo } from "../../components/ui/Typo";
 import { useDispatch, useSelector } from "react-redux";
 import { getPosts } from '../../redux/slices/postsSlice';
 import { Pagination } from '../../components/Pagination';
 import { Loader } from '../../components/ui/Loader';
-import * as SC from './styles';
 import { debounce } from 'lodash';
+import { Search } from '../../components/Search';
+import { Sort } from '../../components/Sort';
+import * as SC from './styles';
+
 
 export const PostsPage = () => {
     const { list, loading, totalPosts } = useSelector((state) => state.posts.posts);
@@ -25,7 +27,7 @@ export const PostsPage = () => {
 
     const handleSortChange = (order) => {
         setSortOrder(order);
-        setCurrentPage(1); 
+        setCurrentPage(1);
     };
 
     const handleSearchChange = debounce((query) => {
@@ -42,21 +44,18 @@ export const PostsPage = () => {
     }
 
     const totalPages = Math.ceil(totalPosts / postsPerPage);
-  
+
     return (
         <Container>
             <SC.Wrapper>
-                <Input
-                    type="text"
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                    placeholder="Поиск по названию"
-                    value={searchQuery} 
+                <Search
+                    value={searchQuery}
+                    onChange={handleSearchChange}
                 />
-                <select onChange={(e) => handleSortChange(e.target.value)} value={sortOrder}>
-                    <option value="none">-</option>
-                    <option value="ASC">ASC</option>
-                    <option value="DESC">DESC</option>
-                </select>
+                <Sort
+                    value={sortOrder}
+                    onChange={handleSortChange}
+                />
             </SC.Wrapper>
             {list.length > 0 ? (
                 <>
@@ -74,3 +73,5 @@ export const PostsPage = () => {
         </Container>
     );
 };
+
+
